@@ -22,6 +22,7 @@ deploy_run:
 	gcloud run deploy ${SERVICE_NAME} \
 		--region ${GOOGLE_REGION} \
 		--image ${DOCKER_URL} \
-		--update-env-vars OPEN_AI_API_KEY=${OPEN_AI_API_KEY} \
-		--update-env-vars KOEMOTION_API_KEY=${KOEMOTION_API_KEY} \
-		--port ${API_PORT}
+		--update-env-vars NEXT_PUBLIC_OPEN_AI_API_KEY=${NEXT_PUBLIC_OPEN_AI_API_KEY} \
+		--update-env-vars NEXT_PUBLIC_KOEMOTION_API_KEY=${NEXT_PUBLIC_KOEMOTION_API_KEY} \
+		--port ${API_PORT} \
+		--allow-unauthenticated
