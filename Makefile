@@ -16,7 +16,7 @@ push_image:
 	docker push ${DOCKER_URL}:latest
 
 local_run:
-	docker run --name ${SERVICE_NAME} --env-file ./env -p 9000:8080 ${DOCKER_URL}
+	docker run --name ${SERVICE_NAME} --env-file ./.env -p 8080:8080 --rm ${DOCKER_URL}
 
 deploy_run:
 	gcloud run deploy ${SERVICE_NAME} \

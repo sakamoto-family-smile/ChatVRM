@@ -5,4 +5,4 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-CMD ["PORT=8080", "npm", "run", "start"]
+CMD ["npm", "run", "start"]
