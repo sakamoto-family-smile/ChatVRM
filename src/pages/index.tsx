@@ -19,8 +19,8 @@ export default function Home() {
   const { viewer } = useContext(ViewerContext);
   const env = process.env
   const [systemPrompt, setSystemPrompt] = useState(SYSTEM_PROMPT);
-  const openAiKey = useState(env.OPEN_AI_API_KEY);
-  const koeiromapKey = useState(env.KOEMOTION_API_KEY);
+  const openAiKey = env.OPEN_AI_API_KEY!;
+  const koeiromapKey = env.KOEMOTION_API_KEY!;
   const [koeiroParam, setKoeiroParam] = useState<KoeiroParam>(DEFAULT_PARAM);
   const [chatProcessing, setChatProcessing] = useState(false);
   const [chatLog, setChatLog] = useState<Message[]>([]);
