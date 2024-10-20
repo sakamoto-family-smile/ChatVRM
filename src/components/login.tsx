@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, Suspense } from "react";
 
 type Props = {
   email: string;
@@ -13,6 +13,7 @@ export const Login = ({
   onChangePassword,
 }: Props) => {
   const [opened, setOpened] = useState(true);
+	const [loginState, setLoginState] = useState("notLogin")
 
   const handleEmailChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +28,47 @@ export const Login = ({
     },
     [onChangePassword]
   );
+
+  const handleLoginBtnClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+			setLoginState("startLogin")
+
+			// TODO : ログイン処理を開始させる
+    },
+		[setLoginState]
+  );
+
+	async function hoge() {
+		await new Promise((resolve) => setTimeout(resolve, 3000));
+	}
+
+	const loginBtnLayout = () => {
+		// ログイン処理が開始されたタイミングでは、ローディングを表示する
+		if (loginState == "startLogin") {
+			return (
+				<div className="my-24">
+					<div className="font-bold text-3xl">Loading ...</div>
+				</div>
+			);
+		}
+		// ログイン処理が完了したら、ログインページを非表示とする
+		else if (loginState == "finishLogin") {
+			setOpened(false)
+		}
+		// それ以外ではボタンを表示する
+		else {
+			return (
+				<div className="my-24">
+					<button
+							onClick={handleLoginBtnClick}
+							className="font-bold bg-secondary hover:bg-secondary-hover active:bg-secondary-press disabled:bg-secondary-disabled text-white px-24 py-8 rounded-oval"
+						>
+						ログイン
+					</button>
+				</div>
+			);
+		}
+	};
 
 	// TODO : openedをトークンの期限が切れているかどうかで判定したい
   return opened ? (
@@ -59,16 +101,7 @@ export const Login = ({
             className="my-4 px-16 py-8 w-full h-40 bg-surface3 hover:bg-surface3-hover rounded-4 text-ellipsis"
           ></input>
         </div>
-        <div className="my-24">
-          <button
-            onClick={() => {
-              setOpened(false);
-            }}
-            className="font-bold bg-secondary hover:bg-secondary-hover active:bg-secondary-press disabled:bg-secondary-disabled text-white px-24 py-8 rounded-oval"
-          >
-            ログイン
-          </button>
-        </div>
+				{loginBtnLayout()}
       </div>
     </div>
   ) : null;
