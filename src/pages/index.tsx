@@ -14,6 +14,7 @@ import { getChatResponseStream } from "@/features/chat/openAiChat";
 import { Menu } from "@/components/menu";
 import { GitHubLink } from "@/components/githubLink";
 import { Meta } from "@/components/meta";
+import { Login } from "@/components/login";
 
 export default function Home() {
   const { viewer } = useContext(ViewerContext);
@@ -25,6 +26,8 @@ export default function Home() {
   const [chatProcessing, setChatProcessing] = useState(false);
   const [chatLog, setChatLog] = useState<Message[]>([]);
   const [assistantMessage, setAssistantMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (window.localStorage.getItem("chatVRMParams")) {
@@ -186,6 +189,12 @@ export default function Home() {
   return (
     <div className={"font-M_PLUS_2"}>
       <Meta />
+      <Login
+        email={email}
+        password={password}
+        onChangeEmail={setEmail}
+        onChangePassword={setPassword}
+      />
       <VrmViewer />
       <MessageInputContainer
         isChatProcessing={chatProcessing}
