@@ -1,4 +1,5 @@
 import { useState, useCallback, Suspense } from "react";
+import { getAuth } from "firebase/auth";
 
 type Props = {
   email: string;
@@ -54,6 +55,24 @@ export const Login = ({
 		// ログイン処理が完了したら、ログインページを非表示とする
 		else if (loginState == "finishLogin") {
 			setOpened(false)
+			return (
+				<div className="my-24">
+				</div>
+			);
+		}
+		// ログインエラー時はボタンを表示しつつ、エラーのダイアログを出したい
+		else if (loginState == "errorLogin") {
+			// TODO : エラーのダイアログを出す
+			return (
+				<div className="my-24">
+					<button
+							onClick={handleLoginBtnClick}
+							className="font-bold bg-secondary hover:bg-secondary-hover active:bg-secondary-press disabled:bg-secondary-disabled text-white px-24 py-8 rounded-oval"
+						>
+						ログイン
+					</button>
+				</div>
+			);
 		}
 		// それ以外ではボタンを表示する
 		else {
