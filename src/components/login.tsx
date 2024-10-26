@@ -1,25 +1,28 @@
-import { useState, useCallback, Suspense } from "react";
+import { useState, useCallback } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 type Props = {
   email: string;
   password: string;
+  iapApiKey: string;
+  iapAuthDomain: string;
   onChangeEmail: (email: string) => void;
   onChangePassword: (password: string) => void;
 };
 export const Login = ({
   email,
   password,
+  iapApiKey,
+  iapAuthDomain,
   onChangeEmail,
   onChangePassword,
 }: Props) => {
   const [opened, setOpened] = useState(true);
   const [loginState, setLoginState] = useState("notLogin")
-  const env = process.env
   const iap_config = {
-    apiKey: env.NEXT_PUBLIC_IAP_API_KEY,
-    authDomain: env.NEXT_PUBLIC_IAP_AUTH_DOMAIN,
+    apiKey: iapApiKey,
+    authDomain: iapAuthDomain,
   }
   const initApp = initializeApp(iap_config);
   const auth = getAuth(initApp);

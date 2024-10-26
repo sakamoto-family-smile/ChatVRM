@@ -22,6 +22,8 @@ export default function Home() {
   const [systemPrompt, setSystemPrompt] = useState(SYSTEM_PROMPT);
   const openAiKey = env.NEXT_PUBLIC_OPEN_AI_API_KEY!;
   const koeiromapKey = env.NEXT_PUBLIC_KOEMOTION_API_KEY!;
+  const iapApiKey = env.NEXT_PUBLIC_IAP_API_KEY!
+  const iapAuthDomain = env.NEXT_PUBLIC_IAP_AUTH_DOMAIN!
   const [koeiroParam, setKoeiroParam] = useState<KoeiroParam>(DEFAULT_PARAM);
   const [chatProcessing, setChatProcessing] = useState(false);
   const [chatLog, setChatLog] = useState<Message[]>([]);
@@ -192,6 +194,8 @@ export default function Home() {
       <Login
         email={email}
         password={password}
+        iapApiKey={iapApiKey}
+        iapAuthDomain={iapAuthDomain}
         onChangeEmail={setEmail}
         onChangePassword={setPassword}
       />
