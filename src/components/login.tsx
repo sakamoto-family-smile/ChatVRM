@@ -18,8 +18,8 @@ export const Login = ({
   const [loginState, setLoginState] = useState("notLogin")
 	const env = process.env
 	const iap_config = {
-		apiKey: env.IAP_API_KEY,
-		authDomain: env.IAP_AUTH_DOMAIN
+		apiKey: env.NEXT_PUBLIC_IAP_API_KEY,
+		authDomain: env.NEXT_PUBLIC_IAP_AUTH_DOMAIN,
 	}
 	const initApp = initializeApp(iap_config);
 	const auth = getAuth(initApp);

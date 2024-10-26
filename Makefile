@@ -28,7 +28,7 @@ deploy_run:
 		--memory ${MEMORY_SIZE}G \
 		--update-env-vars NEXT_PUBLIC_OPEN_AI_API_KEY=${NEXT_PUBLIC_OPEN_AI_API_KEY} \
 		--update-env-vars NEXT_PUBLIC_KOEMOTION_API_KEY=${NEXT_PUBLIC_KOEMOTION_API_KEY} \
-		--update-env-vars IAP_API_KEY=${IAP_API_KEY} \
-		--update-env-vars IAP_AUTH_DOMAIN=${IAP_AUTH_DOMAIN} \
+		--update-env-vars NEXT_PUBLIC_IAP_API_KEY=${NEXT_PUBLIC_IAP_API_KEY} \
+		--update-env-vars NEXT_PUBLIC_IAP_AUTH_DOMAIN=${NEXT_PUBLIC_IAP_AUTH_DOMAIN} \
 		--port ${API_PORT} \
 		--allow-unauthenticated
