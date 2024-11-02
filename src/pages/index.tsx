@@ -15,6 +15,7 @@ import { Menu } from "@/components/menu";
 import { GitHubLink } from "@/components/githubLink";
 import { Meta } from "@/components/meta";
 import { Login } from "@/components/login";
+import { getChatResponse } from "@/features/chat/sakamomoFamilyApiWrapper"
 
 export default function Home() {
   const { viewer } = useContext(ViewerContext);
@@ -80,8 +81,8 @@ export default function Home() {
    */
   const handleSendChat = useCallback(
     async (text: string) => {
-      if (!openAiKey) {
-        setAssistantMessage("APIキーが入力されていません");
+      if (!tokenId) {
+        setAssistantMessage("token idが取得できていません");
         return;
       }
 
@@ -97,7 +98,7 @@ export default function Home() {
       ];
       setChatLog(messageLog);
 
-      // Chat GPTへ
+      // APIに問い合わせをする
       const messages: Message[] = [
         {
           role: "system",
@@ -106,73 +107,64 @@ export default function Home() {
         ...messageLog,
       ];
 
-      const stream = await getChatResponseStream(messages, openAiKey).catch(
+      const response: string = await getChatResponse(messages, tokenId).catch(
         (e) => {
           console.error(e);
           return null;
         }
       );
-      if (stream == null) {
+      if (response == null) {
         setChatProcessing(false);
         return;
       }
 
-      const reader = stream.getReader();
-      let receivedMessage = "";
+      //const reader = stream.getReader();
+      let receivedMessage = response;
       let aiTextLog = "";
       let tag = "";
       const sentences = new Array<string>();
       try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        // 返答内容のタグ部分の検出
+        const tagMatch = receivedMessage.match(/^\[(.*?)\]/);
+        if (tagMatch && tagMatch[0]) {
+        	tag = tagMatch[0];
+        	receivedMessage = receivedMessage.slice(tag.length);
+        }
 
-          receivedMessage += value;
+        // 返答を一文単位で切り出して処理する
+        const sentenceMatch = receivedMessage.match(
+					/^(.+[。．！？\n]|.{10,}[、,])/
+        );
+        if (sentenceMatch && sentenceMatch[0]) {
+					const sentence = sentenceMatch[0];
+					sentences.push(sentence);
+					receivedMessage = receivedMessage
+							.slice(sentence.length)
+							.trimStart();
 
-          // 返答内容のタグ部分の検出
-          const tagMatch = receivedMessage.match(/^\[(.*?)\]/);
-          if (tagMatch && tagMatch[0]) {
-            tag = tagMatch[0];
-            receivedMessage = receivedMessage.slice(tag.length);
-          }
+					// 発話不要/不可能な文字列だった場合はスキップ
+					/*if (
+							!sentence.replace(
+							/^[\s\[\(\{「［（【『〈《〔｛«‹〘〚〛〙›»〕》〉』】）］」\}\)\]]+$/g,
+							""
+							)
+					) {
+						continue;
+					}*/
 
-          // 返答を一文単位で切り出して処理する
-          const sentenceMatch = receivedMessage.match(
-            /^(.+[。．！？\n]|.{10,}[、,])/
-          );
-          if (sentenceMatch && sentenceMatch[0]) {
-            const sentence = sentenceMatch[0];
-            sentences.push(sentence);
-            receivedMessage = receivedMessage
-              .slice(sentence.length)
-              .trimStart();
+					const aiText = `${tag} ${sentence}`;
+					const aiTalks = textsToScreenplay([aiText], koeiroParam);
+					aiTextLog += aiText;
 
-            // 発話不要/不可能な文字列だった場合はスキップ
-            if (
-              !sentence.replace(
-                /^[\s\[\(\{「［（【『〈《〔｛«‹〘〚〛〙›»〕》〉』】）］」\}\)\]]+$/g,
-                ""
-              )
-            ) {
-              continue;
-            }
-
-            const aiText = `${tag} ${sentence}`;
-            const aiTalks = textsToScreenplay([aiText], koeiroParam);
-            aiTextLog += aiText;
-
-            // 文ごとに音声を生成 & 再生、返答を表示
-            const currentAssistantMessage = sentences.join(" ");
-            handleSpeakAi(aiTalks[0], () => {
-              setAssistantMessage(currentAssistantMessage);
-            });
-          }
+					// 文ごとに音声を生成 & 再生、返答を表示
+					const currentAssistantMessage = sentences.join(" ");
+					handleSpeakAi(aiTalks[0], () => {
+						setAssistantMessage(currentAssistantMessage);
+					});
         }
       } catch (e) {
         setChatProcessing(false);
         console.error(e);
-      } finally {
-        reader.releaseLock();
       }
 
       // アシスタントの返答をログに追加
@@ -184,7 +176,7 @@ export default function Home() {
       setChatLog(messageLogAssistant);
       setChatProcessing(false);
     },
-    [systemPrompt, chatLog, handleSpeakAi, openAiKey, koeiroParam]
+    [systemPrompt, chatLog, handleSpeakAi, koeiroParam, tokenId]
   );
 
   return (
