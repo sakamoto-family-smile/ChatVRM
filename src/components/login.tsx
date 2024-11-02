@@ -3,43 +3,48 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 type Props = {
-  email: string;
-  password: string;
+  tokenId: string;
+	onChangeTokenId: (tokenId: string) => void;
   iapApiKey: string;
   iapAuthDomain: string;
-  onChangeEmail: (email: string) => void;
-  onChangePassword: (password: string) => void;
 };
 export const Login = ({
-  email,
-  password,
+	tokenId,
+	onChangeTokenId,
   iapApiKey,
   iapAuthDomain,
-  onChangeEmail,
-  onChangePassword,
 }: Props) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [opened, setOpened] = useState(true);
   const [loginState, setLoginState] = useState("notLogin")
-  const iap_config = {
+  const iapConfig = {
     apiKey: iapApiKey,
     authDomain: iapAuthDomain,
   }
-  const initApp = initializeApp(iap_config);
+  const initApp = initializeApp(iapConfig);
   const auth = getAuth(initApp);
 
   const handleEmailChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      onChangeEmail(event.target.value);
+      setEmail(event.target.value);
     },
-    [onChangeEmail]
+    [setEmail]
   );
 
   const handlePasswordChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      onChangePassword(event.target.value);
+      setPassword(event.target.value);
     },
-    [onChangePassword]
+    [setPassword]
   );
+
+	const handleTokenIdChange = useCallback(
+		(tokenId: string) => {
+			onChangeTokenId(tokenId)
+		},
+		[onChangeTokenId]
+	)
 
   const handleLoginBtnClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -47,9 +52,20 @@ export const Login = ({
 
       // TODO : ログイン処理を開始させる
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          setLoginState("finishLogin")
-          console.log("finish login")
+        .then((response) => {
+					// token id を取得し、内部で保存しておく
+					response.user?.getIdToken()
+						.then((token) => {
+							handleTokenIdChange(token)
+							setLoginState("finishLogin")
+							// console.log("token id : " + token)
+						})
+						.catch((e) => {
+							setLoginState("errorLogin")
+							if (e instanceof Error) {
+								console.log(e.message)
+							}
+						})
         })
         .catch((e: unknown) => {
           setLoginState("errorLogin")
@@ -59,7 +75,7 @@ export const Login = ({
           }
         })
     },
-    [setLoginState]
+    [auth, email, password, setLoginState, handleTokenIdChange]
   );
 
   const loginBtnLayout = () => {

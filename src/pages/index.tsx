@@ -28,8 +28,7 @@ export default function Home() {
   const [chatProcessing, setChatProcessing] = useState(false);
   const [chatLog, setChatLog] = useState<Message[]>([]);
   const [assistantMessage, setAssistantMessage] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [tokenId, setTokenId] = useState("");
 
   useEffect(() => {
     if (window.localStorage.getItem("chatVRMParams")) {
@@ -192,12 +191,10 @@ export default function Home() {
     <div className={"font-M_PLUS_2"}>
       <Meta />
       <Login
-        email={email}
-        password={password}
+        tokenId={tokenId}
+        onChangeTokenId={setTokenId}
         iapApiKey={iapApiKey}
         iapAuthDomain={iapAuthDomain}
-        onChangeEmail={setEmail}
-        onChangePassword={setPassword}
       />
       <VrmViewer />
       <MessageInputContainer
