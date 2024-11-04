@@ -4,13 +4,13 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 type Props = {
   tokenId: string;
-	onChangeTokenId: (tokenId: string) => void;
+  onChangeTokenId: (tokenId: string) => void;
   iapApiKey: string;
   iapAuthDomain: string;
 };
 export const Login = ({
-	tokenId,
-	onChangeTokenId,
+  tokenId,
+  onChangeTokenId,
   iapApiKey,
   iapAuthDomain,
 }: Props) => {
@@ -39,31 +39,31 @@ export const Login = ({
     [setPassword]
   );
 
-	const handleTokenIdChange = useCallback(
-		(tokenId: string) => {
-			onChangeTokenId(tokenId)
-		},
-		[onChangeTokenId]
-	)
+  const handleTokenIdChange = useCallback(
+    (tokenId: string) => {
+      onChangeTokenId(tokenId)
+    },
+    [onChangeTokenId]
+  )
 
   const handleLoginBtnClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       setLoginState("startLogin")
       signInWithEmailAndPassword(auth, email, password)
         .then((response) => {
-					// token id を取得し、内部で保存しておく
-					response.user?.getIdToken()
-						.then((token) => {
-							handleTokenIdChange(token)
-							setLoginState("finishLogin")
-							// console.log("token id : " + token)
-						})
-						.catch((e) => {
-							setLoginState("errorLogin")
-							if (e instanceof Error) {
-								console.log(e.message)
-							}
-						})
+          // token id を取得し、内部で保存しておく
+          response.user?.getIdToken()
+            .then((token) => {
+              handleTokenIdChange(token)
+              setLoginState("finishLogin")
+              // console.log("token id : " + token)
+            })
+            .catch((e) => {
+              setLoginState("errorLogin")
+              if (e instanceof Error) {
+                console.log(e.message)
+              }
+            })
         })
         .catch((e: unknown) => {
           setLoginState("errorLogin")
