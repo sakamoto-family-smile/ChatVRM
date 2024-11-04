@@ -49,8 +49,6 @@ export const Login = ({
   const handleLoginBtnClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       setLoginState("startLogin")
-
-      // TODO : ログイン処理を開始させる
       signInWithEmailAndPassword(auth, email, password)
         .then((response) => {
 					// token id を取得し、内部で保存しておく

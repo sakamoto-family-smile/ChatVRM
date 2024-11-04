@@ -107,7 +107,7 @@ export default function Home() {
         ...messageLog,
       ];
 
-      const response: string = await getChatResponse(messages, tokenId).catch(
+      const response = await getChatResponse(messages, tokenId).catch(
         (e) => {
           console.error(e);
           return null;
@@ -142,7 +142,7 @@ export default function Home() {
 							.slice(sentence.length)
 							.trimStart();
 
-					// 発話不要/不可能な文字列だった場合はスキップ
+					// TODO : 発話不要/不可能な文字列だった場合はスキップ
 					/*if (
 							!sentence.replace(
 							/^[\s\[\(\{「［（【『〈《〔｛«‹〘〚〛〙›»〕》〉』】）］」\}\)\]]+$/g,
