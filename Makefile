@@ -4,6 +4,8 @@ DOCKER_BASE_URL=${GOOGLE_REGION}-docker.pkg.dev
 DOCKER_URL=${DOCKER_BASE_URL}/${GOOGLE_CLOUD_PROJECT}/line-sakamomo-family-api/vr_chat_front
 SERVICE_NAME=sakamomo-family-vr-front
 API_PORT=8080
+CPU=2
+MEMORY_SIZE=4
 include .env
 
 setup:
@@ -22,7 +24,16 @@ deploy_run:
 	gcloud run deploy ${SERVICE_NAME} \
 		--region ${GOOGLE_REGION} \
 		--image ${DOCKER_URL} \
+		--cpu ${CPU} \
+		--memory ${MEMORY_SIZE}G \
 		--update-env-vars NEXT_PUBLIC_OPEN_AI_API_KEY=${NEXT_PUBLIC_OPEN_AI_API_KEY} \
 		--update-env-vars NEXT_PUBLIC_KOEMOTION_API_KEY=${NEXT_PUBLIC_KOEMOTION_API_KEY} \
+		--update-env-vars NEXT_PUBLIC_IAP_API_KEY=${NEXT_PUBLIC_IAP_API_KEY} \
+		--update-env-vars NEXT_PUBLIC_IAP_AUTH_DOMAIN=${NEXT_PUBLIC_IAP_AUTH_DOMAIN} \
 		--port ${API_PORT} \
 		--allow-unauthenticated
+
+all_process:
+	make build
+	make push_image
+	make deploy_run
